@@ -20,34 +20,69 @@
         <TextView
             android:fontFamily="@font/dseg7bold"
             android:textColor="@color/white"
-            android:id="@+id/speedText"
+            android:id="@+id/tvSpeed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:text="@string/_0"
-            android:textSize="120sp" />
+            android:textSize="130sp" />
 
         <TextView
             android:fontFamily="@font/dseg7bold"
             android:textColor="@color/white"
-            android:id="@+id/speedTextBg"
+            android:id="@+id/tvSpeedBg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/_888"
-            android:textSize="120sp"
+            android:textSize="130sp"
             android:alpha=".2" />
     </FrameLayout>
 
     <TextView
         android:fontFamily="@font/poppins_bold"
         android:paddingTop="10dp"
-        android:id="@+id/unitText"
+        android:id="@+id/tvUnit"
         app:layout_constraintEnd_toEndOf="@id/mainFrame"
+        app:layout_constraintStart_toStartOf="@id/mainFrame"
         app:layout_constraintTop_toBottomOf="@id/mainFrame"
         android:textColor="@color/white"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="right"
         android:text="@string/km_h"
-        android:textSize="24sp" />
+        android:textSize="30sp" />
+
+    <ImageView
+        android:id="@+id/ivFlip"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/baseline_flip_24"
+        android:alpha=".5"
+        app:tint="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="10dp"/>
+
+    <ImageView
+        android:id="@+id/ivFull"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/baseline_fullscreen_24"
+        android:alpha=".5"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="8dp"/>
+
+    <ImageView
+        android:id="@+id/ivReset"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/baseline_bug_report_24"
+        android:alpha=".5"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="8dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
