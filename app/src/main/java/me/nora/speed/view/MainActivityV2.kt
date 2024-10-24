@@ -2,6 +2,7 @@ package me.nora.speed.view
 
 import android.Manifest
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.location.Location
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import me.nora.speed.R
 import me.nora.speed.databinding.ActivityMainV2Binding
 import java.util.*
 
@@ -22,13 +24,27 @@ class MainActivityV2 : AppCompatActivity(), LocationListener {
     private lateinit var binding: ActivityMainV2Binding
     private lateinit var locationManager: LocationManager
     private var isFullscreen = false
+    private var isMph = false
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainV2Binding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        isMph = sharedPreferences.getBoolean("IS_MPH", false)
+        checkUnit()
+
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         checkLocationPermission()
+
+        binding.tvUnit.setOnClickListener {
+            isMph = !isMph
+            checkUnit()
+            sharedPreferences.edit().putBoolean("IS_MPH", isMph).apply()
+        }
 
         binding.ivFlip.setOnClickListener {
             setFlip()
@@ -47,6 +63,14 @@ class MainActivityV2 : AppCompatActivity(), LocationListener {
             binding.tvSpeed.setTextSize(TypedValue.COMPLEX_UNIT_SP, 130f)
             binding.tvSpeedBg.setTextSize(TypedValue.COMPLEX_UNIT_SP, 130f)
             binding.tvUnit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f)
+        }
+    }
+
+    private fun checkUnit() {
+        if (isMph) {
+            binding.tvUnit.text = getString(R.string.mp_h)
+        } else {
+            binding.tvUnit.text = getString(R.string.km_h)
         }
     }
 
@@ -80,6 +104,9 @@ class MainActivityV2 : AppCompatActivity(), LocationListener {
         windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
         windowInsetsController.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        binding.ivReset.visibility = View.INVISIBLE
+        binding.ivFlip.visibility = View.INVISIBLE
     }
 
     private fun exitFullscreen() {
@@ -87,6 +114,9 @@ class MainActivityV2 : AppCompatActivity(), LocationListener {
         val windowInsetsController = WindowInsetsControllerCompat(window, decorView)
 
         windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+
+        binding.ivReset.visibility = View.VISIBLE
+        binding.ivFlip.visibility = View.VISIBLE
     }
 
     private fun checkLocationPermission() {
@@ -100,13 +130,12 @@ class MainActivityV2 : AppCompatActivity(), LocationListener {
     }
 
     override fun onLocationChanged(location: Location) {
-        val speed = location.speed * 3.6f // convert m/s to km/h
+        var speed: Float = location.speed * 3.6f
+
+        if (isMph) {
+            speed /= 1.609f
+        }
+
         binding.tvSpeed.text = String.format(Locale.getDefault(), "%.0f", speed)
     }
-
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-
-    override fun onProviderEnabled(provider: String) {}
-
-    override fun onProviderDisabled(provider: String) {}
 }
